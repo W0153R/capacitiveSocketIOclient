@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src='jquery.min.js'></script>
+    <script src='socket.io/socket.io.js'></script>
+    <script>
+      var socket = io('/admin');
+      var testToggle = '0';
+      function reCalSensor(i) {
+        socket.emit('reset', i);
+      }
+      function reBootSensor(i) {
+        socket.emit('reboot', i);
+      }
+      function testInput(i,onOff) {
+        var message = {};
+        message[i] = onOff ? '0' : '127';
+        socket.emit('input', message);
+      }
+      socket.on('input', function(data) {
+        if (data.sensor1 !== undefined) { $('#sensor1').toggleClass('on'); }
+        if (data.sensor2 !== undefined) { $('#sensor2').toggleClass('on'); }
+        if (data.sensor3 !== undefined) { $('#sensor3').toggleClass('on'); }
+        if (data.sensor4 !== undefined) { $('#sensor4').toggleClass('on'); }
+        if (data.sensor5 !== undefined) { $('#sensor5').toggleClass('on'); }
+      });
+      socket.on('clientCount', function(data) {
+        $('#clientCount').html(data);
+      });
+      $(document).ready(function() {
+        $('button').css('height',$('button').first().parent().height()+'px');
+      });
+    </script>
+    <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    p {
+      font-size: 1.5em;
+      margin: 0.4em 0 0.4em 0.3em;
+    }
+    #clientCount {
+      border: 3px solid;
+      padding: 0 10px;
+    }
+    ul {
+      list-style: none;
+      font-size: 2em;
+      padding: 0;
+      margin: 0;
+    }
+    li {
+      line-height: 1em;
+      vertical-align: middle;
+      padding: 0.4em 0 0.4em 0;
+      border-top: 3px solid;
+    }
+    li::before {
+      content: "\2022";
+      color: #FF0000;
+      display: inline-block;
+      width: 0.4em;
+      font-size: 3em;
+      vertical-align: top;
+    }
+    li.on::before {
+      color: #00FF00;
+    }
+    button {
+      vertical-align: top;
+    }
+    </style>
+  </head>
+  <body>
+    <p>Clients connected: <span id='clientCount'></span></p>
+    <ul id='messages'>
+      <li id='sensor1'><span onclick="testInput('sensor1',$(this).parent().hasClass('on'))">Ballot 1</span> <button class="button" onclick="reCalSensor('sensor1')">Recalibrate</button> <button class="button" onclick="reBootSensor('sensor1')">Reboot</button></li>
+      <li id='sensor2'><span onclick="testInput('sensor2',$(this).parent().hasClass('on'))">Ballot 2</span> <button class="button" onclick="reCalSensor('sensor2')">Recalibrate</button> <button class="button" onclick="reBootSensor('sensor2')">Reboot</button></li>
+      <li id='sensor3'><span onclick="testInput('sensor3',$(this).parent().hasClass('on'))">Ballot 3</span> <button class="button" onclick="reCalSensor('sensor3')">Recalibrate</button> <button class="button" onclick="reBootSensor('sensor3')">Reboot</button></li>
+      <li id='sensor4'><span onclick="testInput('sensor4',$(this).parent().hasClass('on'))">Ballot 4</span> <button class="button" onclick="reCalSensor('sensor4')">Recalibrate</button> <button class="button" onclick="reBootSensor('sensor4')">Reboot</button></li>
+      <li id='sensor5'><span onclick="testInput('sensor5',$(this).parent().hasClass('on'))">Ballot 5</span> <button class="button" onclick="reCalSensor('sensor5')">Recalibrate</button> <button class="button" onclick="reBootSensor('sensor5')">Reboot</button></li>
+    </ul>
+  </body>
+</html>
